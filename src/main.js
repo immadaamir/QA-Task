@@ -2,7 +2,7 @@ const ethers = require("ethers");
 require('dotenv').config();
 
 const sepoliaRpcUrl = "https://rpc2.sepolia.org";
-const privateKey = process.env.PRIVATE_KEY || "PRIVATE KEY GOES HERE";
+const privateKey = process.env.PRIVATE_KEY || "Private key";
 
 const erc20Abi = [
     "function approve(address spender, uint256 amount) public returns (bool)"
@@ -15,8 +15,9 @@ const lockAbi = [
 
 const contractAddress = "0x4f0fd563be89ec8c3e7d595bf3639128c0a7c33a";
 const tokenAddress = "0xE32db794F27c1E3Aa7498f78d73Dc2d265F6893a";
+const withdrawalAddress = "0x61Bca83A8410bBEbD9e4A2e541837FEb91db7c8B";
 
-const amountToLock = 1;
+const amountToLock = ethers.parseUnits("1", 18); // Converts 1 tokens to 18 decimals Wei
 const unlockTime = Math.floor(Date.now() / 1000) + (3600 * 24);
 const mintNFT = false;
 const referrer = "0x0000000000000000000000000000000000000000";
@@ -26,7 +27,7 @@ const wallet = new ethers.Wallet(privateKey, provider);
 const tokenContract = new ethers.Contract(tokenAddress, erc20Abi, wallet);
 const lockingContract = new ethers.Contract(contractAddress, lockAbi, wallet);
 
-async function approveAndLockTokens(withdrawalAddress) {
+async function approveAndLockTokens() {
     try {
         console.log("Approving contract to spend tokens...");
         const approveTx = await tokenContract.approve(contractAddress, amountToLock);
@@ -43,7 +44,7 @@ async function approveAndLockTokens(withdrawalAddress) {
             mintNFT,
             referrer,
             {
-                gasLimit: 300000
+                gasLimit: 3000000
             }
         );
 
